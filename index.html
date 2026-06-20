@@ -8,17 +8,17 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: #f2f2f7;
-    color: #1c1c1e;
+    font-family: -apple-system, 'SF Pro Text', BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #fafaf8;
+    color: #1d1d1f;
     min-height: 100dvh;
     display: flex;
     flex-direction: column;
   }
 
   header {
-    background: #fff;
-    border-bottom: 1px solid #e5e5ea;
+    background: #fafaf8;
+    border-bottom: 1px solid #d4d4c8;
     padding: 16px 20px 12px;
     position: sticky;
     top: 0;
@@ -32,7 +32,7 @@
     bottom: 80px;
     left: 50%;
     transform: translateX(-50%) translateY(20px);
-    background: #333;
+    background: #2d2d2d;
     color: #fff;
     padding: 10px 20px;
     border-radius: 20px;
@@ -50,8 +50,8 @@
   /* Tab bar */
   nav {
     display: flex;
-    background: #fff;
-    border-top: 1px solid #e5e5ea;
+    background: #fafaf8;
+    border-top: 1px solid #d4d4c8;
     position: fixed;
     bottom: 0; left: 0; right: 0;
     z-index: 10;
@@ -62,7 +62,7 @@
     border: none;
     background: none;
     font-size: 11px;
-    color: #8e8e93;
+    color: #86868b;
     cursor: pointer;
     display: flex;
     flex-direction: column;
@@ -71,7 +71,7 @@
     transition: color 0.15s;
     -webkit-tap-highlight-color: transparent;
   }
-  nav button.active { color: #007aff; }
+  nav button.active { color: #0071e3; }
   nav button svg { width: 24px; height: 24px; }
 
   /* Main content */
@@ -88,29 +88,30 @@
 
   /* Cards */
   .card {
-    background: #fff;
+    background: #f5f5f0;
     border-radius: 12px;
     padding: 16px;
     margin-bottom: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.04);
   }
-  .card h2 { font-size: 15px; font-weight: 600; margin-bottom: 12px; color: #3a3a3c; }
+  .card h2 { font-size: 15px; font-weight: 600; margin-bottom: 12px; color: #3a3a3a; }
 
   /* Form elements */
   input[type="text"], input[type="number"], select {
     width: 100%;
     padding: 11px 14px;
-    border: 1px solid #d1d1d6;
+    border: 1px solid #d4d4c8;
     border-radius: 10px;
     font-size: 16px;
-    background: #fff;
+    background: #f5f5f0;
     -webkit-appearance: none;
     appearance: none;
-    color: #1c1c1e;
+    color: #1d1d1f;
   }
   input[type="text"]:focus, input[type="number"]:focus, select:focus {
     outline: none;
-    border-color: #007aff;
-    box-shadow: 0 0 0 3px rgba(0,122,255,0.15);
+    border-color: #0071e3;
+    box-shadow: 0 0 0 3px rgba(0,113,227,0.15);
   }
   input.error { border-color: #ff3b30; }
 
@@ -137,8 +138,8 @@
     white-space: nowrap;
   }
   .btn:active { opacity: 0.7; }
-  .btn-primary { background: #007aff; color: #fff; }
-  .btn-secondary { background: #e5e5ea; color: #1c1c1e; }
+  .btn-primary { background: #0071e3; color: #fff; }
+  .btn-secondary { background: #e8e8e3; color: #1d1d1f; }
   .btn-danger { background: #ff3b30; color: #fff; }
   .btn-sm { padding: 6px 12px; font-size: 13px; border-radius: 8px; }
   .btn-block { width: 100%; margin-top: 10px; }
@@ -148,7 +149,7 @@
     display: flex;
     align-items: center;
     padding: 10px 0;
-    border-bottom: 1px solid #f2f2f7;
+    border-bottom: 1px solid #ebebe6;
     gap: 8px;
   }
   .player-item:last-child { border-bottom: none; }
@@ -158,8 +159,8 @@
     font-weight: 600;
     padding: 3px 8px;
     border-radius: 20px;
-    background: #e9f3ff;
-    color: #007aff;
+    background: #e8f0fb;
+    color: #0071e3;
   }
   .badge-mirrored {
     font-size: 11px;
@@ -177,14 +178,14 @@
     align-items: center;
     gap: 10px;
     padding: 10px;
-    border: 1.5px solid #d1d1d6;
+    border: 1.5px solid #d4d4c8;
     border-radius: 10px;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
     transition: border-color 0.15s, background 0.15s;
   }
-  .checkbox-item.selected { border-color: #007aff; background: #e9f3ff; }
-  .checkbox-item input[type="checkbox"] { width: 18px; height: 18px; accent-color: #007aff; flex-shrink: 0; }
+  .checkbox-item.selected { border-color: #0071e3; background: #e8f0fb; }
+  .checkbox-item input[type="checkbox"] { width: 18px; height: 18px; accent-color: #0071e3; flex-shrink: 0; }
   .checkbox-item label { font-size: 15px; cursor: pointer; flex: 1; }
 
   /* Score entry */
@@ -192,7 +193,7 @@
     display: flex;
     align-items: center;
     padding: 10px 0;
-    border-bottom: 1px solid #f2f2f7;
+    border-bottom: 1px solid #ebebe6;
     gap: 10px;
   }
   .score-row:last-child { border-bottom: none; }
@@ -206,32 +207,32 @@
     text-align: left;
     font-size: 12px;
     font-weight: 600;
-    color: #8e8e93;
+    color: #86868b;
     padding: 6px 0;
-    border-bottom: 1px solid #e5e5ea;
+    border-bottom: 1px solid #d4d4c8;
     text-transform: uppercase;
     letter-spacing: 0.4px;
   }
-  .rank-table td { padding: 12px 0; border-bottom: 1px solid #f2f2f7; font-size: 15px; }
+  .rank-table td { padding: 12px 0; border-bottom: 1px solid #ebebe6; font-size: 15px; }
   .rank-table tr:last-child td { border-bottom: none; }
   .rank-num { font-weight: 700; width: 30px; }
   .rank-1 .rank-num { color: #ff9f0a; }
-  .rank-2 .rank-num { color: #636366; }
+  .rank-2 .rank-num { color: #6e6e73; }
   .rank-3 .rank-num { color: #bf5a2b; }
   .rank-wins { font-weight: 600; width: 50px; text-align: center; }
-  .rank-diff { color: #636366; width: 60px; text-align: center; }
+  .rank-diff { color: #6e6e73; width: 60px; text-align: center; }
 
   /* History */
   .history-actions { display: flex; flex-direction: column; gap: 12px; }
 
   /* Empty state */
-  .empty { text-align: center; color: #8e8e93; font-size: 14px; padding: 24px 0; }
+  .empty { text-align: center; color: #86868b; font-size: 14px; padding: 24px 0; }
 
   /* Section label */
   .section-label {
     font-size: 12px;
     font-weight: 600;
-    color: #8e8e93;
+    color: #86868b;
     text-transform: uppercase;
     letter-spacing: 0.4px;
     margin: 16px 0 8px;
@@ -240,7 +241,7 @@
   /* Round history rows */
   .round-item {
     padding: 10px 0;
-    border-bottom: 1px solid #f2f2f7;
+    border-bottom: 1px solid #ebebe6;
   }
   .round-item:last-child { border-bottom: none; }
   .round-item-header {
@@ -250,7 +251,9 @@
     margin-bottom: 6px;
   }
   .round-title { font-weight: 600; font-size: 14px; }
-  .round-scores { font-size: 13px; color: #636366; line-height: 1.6; }
+  .round-scores { font-size: 13px; color: #6e6e73; line-height: 1.6; }
+  .round-winner { font-size: 12px; color: #0071e3; margin-top: 6px; font-weight: 500; }
+  .round-tie { font-size: 12px; color: #86868b; margin-top: 6px; }
 
   @media (min-width: 480px) {
     main { max-width: 480px; margin: 0 auto; }
@@ -276,7 +279,7 @@
 
     <div class="card" id="group-card" style="display:none">
       <h2>建立組合</h2>
-      <p style="font-size:13px;color:#636366;margin-bottom:10px">選擇 2 位以上選手，他們的分數將自動同步</p>
+      <p style="font-size:13px;color:#6e6e73;margin-bottom:10px">選擇 2 位以上選手，他們的分數將自動同步</p>
       <div id="group-checkbox-list" class="checkbox-list"></div>
       <div style="margin-top:10px">
         <input type="text" id="new-group-name" placeholder="組合名稱（選填）" maxlength="20">
@@ -305,7 +308,7 @@
           <button class="btn btn-secondary btn-sm" onclick="nextRound()" id="btn-next-round">下一場</button>
         </div>
       </div>
-      <p style="font-size:12px;color:#8e8e93">共 <span id="total-rounds-label">1</span> 場</p>
+      <p style="font-size:12px;color:#86868b">共 <span id="total-rounds-label">1</span> 場</p>
     </div>
 
     <div class="card" id="score-entry-card">
@@ -331,12 +334,12 @@
   <div id="panel-help" class="panel">
     <div class="card">
       <h2>關於本工具</h2>
-      <p style="font-size:14px;color:#636366;line-height:1.7">這是一款比賽計分工具，支援多位選手、組合綁定與自動排名，適合現場賽事使用。請依下方步驟操作。</p>
+      <p style="font-size:14px;color:#6e6e73;line-height:1.7">這是一款比賽計分工具，支援多位選手、組合綁定與自動排名，適合現場賽事使用。請依下方步驟操作。</p>
     </div>
 
     <div class="card">
       <h2>第一步：建立名單</h2>
-      <div style="font-size:14px;color:#636366;line-height:1.8">
+      <div style="font-size:14px;color:#6e6e73;line-height:1.8">
         <p><strong>新增選手</strong></p>
         <p>1. 切換到「名單」頁籤</p>
         <p>2. 在「新增選手」欄位輸入選手姓名</p>
@@ -350,7 +353,7 @@
 
     <div class="card">
       <h2>第二步：設定組合（選用）</h2>
-      <div style="font-size:14px;color:#636366;line-height:1.8">
+      <div style="font-size:14px;color:#6e6e73;line-height:1.8">
         <p><strong>什麼是組合？</strong></p>
         <p>組合是將 2 位以上的選手綁定在一起。計分時只需輸入一位，其他成員的分數會自動同步，排名時也視為同一單位。</p>
         <br>
@@ -365,7 +368,7 @@
 
     <div class="card">
       <h2>第三步：輸入分數</h2>
-      <div style="font-size:14px;color:#636366;line-height:1.8">
+      <div style="font-size:14px;color:#6e6e73;line-height:1.8">
         <p>1. 切換到「計分」頁籤</p>
         <p>2. 使用「上一場／下一場」按鈕切換場次</p>
         <p>3. 為每位選手輸入本場分數（需為整數，最小為 0）</p>
@@ -377,7 +380,7 @@
 
     <div class="card">
       <h2>排名規則</h2>
-      <div style="font-size:14px;color:#636366;line-height:1.8">
+      <div style="font-size:14px;color:#6e6e73;line-height:1.8">
         <p>切換到「排名」頁籤即可查看即時排名。</p>
         <br>
         <p><strong>勝場判定：</strong>每場得分最高者（唯一最高分）獲勝；若最高分有多人並列，則該場無人獲勝。</p>
@@ -391,7 +394,7 @@
 
     <div class="card">
       <h2>匯出與匯入資料</h2>
-      <div style="font-size:14px;color:#636366;line-height:1.8">
+      <div style="font-size:14px;color:#6e6e73;line-height:1.8">
         <p><strong>匯出</strong></p>
         <p>在「紀錄」頁籤點按「匯出 .txt 檔案」，可將所有資料下載為文字檔，方便備份或轉移。</p>
         <br>
@@ -421,7 +424,7 @@
     </div>
     <div class="card">
       <h2>使用說明</h2>
-      <div style="font-size:14px;color:#636366;line-height:1.7">
+      <div style="font-size:14px;color:#6e6e73;line-height:1.7">
         <p><strong>排名規則：</strong></p>
         <p>1. 勝場數多者排名較前</p>
         <p>2. 勝場相同時，比較「勝場分數差總和」（即每場勝利時領先分數的加總），總和較多者排名較前</p>
@@ -663,7 +666,7 @@ function renderRoster() {
       return `<div class="player-item">
         <div style="flex:1">
           <div style="font-weight:600;font-size:15px">${escHtml(g.name)}</div>
-          <div style="font-size:13px;color:#636366;margin-top:2px">${memberNames}</div>
+          <div style="font-size:13px;color:#6e6e73;margin-top:2px">${memberNames}</div>
         </div>
         <button class="btn btn-secondary btn-sm" onclick="disbandGroup('${g.id}')">解散</button>
       </div>`;
@@ -814,6 +817,42 @@ function nextRound() {
   renderScoreEntry();
 }
 
+// ─── ROUND RESULT HELPER ─────────────────────────────────────────────────────
+function computeRoundResult(roundScores) {
+  const unitScores = [];
+  const processedPlayers = new Set();
+
+  state.players.forEach(p => {
+    if (processedPlayers.has(p.id)) return;
+    if (!(p.id in roundScores)) return;
+
+    const grp = getPlayerGroup(p.id);
+    if (grp) {
+      const memberIds = grp.playerIds.filter(pid => pid in roundScores);
+      if (memberIds.length > 0) {
+        unitScores.push({ score: roundScores[memberIds[0]], groupName: grp.name, playerIds: grp.playerIds });
+        grp.playerIds.forEach(pid => processedPlayers.add(pid));
+      }
+    } else {
+      unitScores.push({ score: roundScores[p.id], playerName: p.name, playerIds: [p.id] });
+      processedPlayers.add(p.id);
+    }
+  });
+
+  if (unitScores.length === 0) return null;
+
+  const sorted = [...unitScores].sort((a, b) => b.score - a.score);
+  const maxScore = sorted[0].score;
+  const secondScore = sorted.length > 1 ? sorted[1].score : 0;
+  const winners = unitScores.filter(u => u.score === maxScore);
+
+  if (winners.length !== 1) return { tie: true };
+
+  const w = winners[0];
+  const winnerName = w.groupName || w.playerName;
+  return { tie: false, winnerName, diff: maxScore - secondScore };
+}
+
 // ─── RANKING ENGINE ───────────────────────────────────────────────────────────
 function computeRankings() {
   // For each round: determine the winning "unit" (group or solo player)
@@ -925,11 +964,21 @@ function renderRankings() {
         .filter(p => p.id in scores)
         .map(p => `${escHtml(p.name)}: ${scores[p.id]}`)
         .join('　');
+      const result = computeRoundResult(scores);
+      let resultHtml = '';
+      if (result) {
+        if (result.tie) {
+          resultHtml = `<div class="round-tie">⚖️ 平手，此場無勝者</div>`;
+        } else {
+          resultHtml = `<div class="round-winner">🏆 ${escHtml(result.winnerName)} 勝　差分 +${result.diff}</div>`;
+        }
+      }
       return `<div class="round-item">
         <div class="round-item-header">
           <span class="round-title">第 ${rn} 場</span>
         </div>
         <div class="round-scores">${scoreLines}</div>
+        ${resultHtml}
       </div>`;
     }).join('');
   } else {
