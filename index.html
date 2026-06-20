@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>計分工具</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #f2f2f7;
+    color: #1c1c1e;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  header {
+    background: #fff;
+    border-bottom: 1px solid #e5e5ea;
+    padding: 16px 20px 12px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  header h1 { font-size: 20px; font-weight: 700; }
+
+  /* Toast */
+  #toast {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #333;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 14px;
+    opacity: 0;
+    transition: opacity 0.25s, transform 0.25s;
+    pointer-events: none;
+    z-index: 100;
+    white-space: nowrap;
+    max-width: 90vw;
+    text-align: center;
+  }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* Tab bar */
+  nav {
+    display: flex;
+    background: #fff;
+    border-top: 1px solid #e5e5ea;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    z-index: 10;
+  }
+  nav button {
+    flex: 1;
+    padding: 10px 4px 14px;
+    border: none;
+    background: none;
+    font-size: 11px;
+    color: #8e8e93;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    transition: color 0.15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  nav button.active { color: #007aff; }
+  nav button svg { width: 24px; height: 24px; }
+
+  /* Main content */
+  main {
+    flex: 1;
+    padding: 16px;
+    padding-bottom: 80px;
+    overflow-y: auto;
+  }
+
+  /* Panels */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* Cards */
+  .card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .card h2 { font-size: 15px; font-weight: 600; margin-bottom: 12px; color: #3a3a3c; }
+
+  /* Form elements */
+  input[type="text"], input[type="number"], select {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1px solid #d1d1d6;
+    border-radius: 10px;
+    font-size: 16px;
+    background: #fff;
+    -webkit-appearance: none;
+    appearance: none;
+    color: #1c1c1e;
+  }
+  input[type="text"]:focus, input[type="number"]:focus, select:focus {
+    outline: none;
+    border-color: #007aff;
+    box-shadow: 0 0 0 3px rgba(0,122,255,0.15);
+  }
+  input.error { border-color: #ff3b30; }
+
+  .input-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .input-row input, .input-row select { flex: 1; }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 11px 20px;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: opacity 0.15s;
+    white-space: nowrap;
+  }
+  .btn:active { opacity: 0.7; }
+  .btn-primary { background: #007aff; color: #fff; }
+  .btn-secondary { background: #e5e5ea; color: #1c1c1e; }
+  .btn-danger { background: #ff3b30; color: #fff; }
+  .btn-sm { padding: 6px 12px; font-size: 13px; border-radius: 8px; }
+  .btn-block { width: 100%; margin-top: 10px; }
+
+  /* Player list */
+  .player-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #f2f2f7;
+    gap: 8px;
+  }
+  .player-item:last-child { border-bottom: none; }
+  .player-name { flex: 1; font-size: 15px; }
+  .badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 20px;
+    background: #e9f3ff;
+    color: #007aff;
+  }
+  .badge-mirrored {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 20px;
+    background: #fff3cd;
+    color: #856404;
+  }
+
+  /* Checkbox group */
+  .checkbox-list { display: flex; flex-direction: column; gap: 8px; margin: 10px 0; }
+  .checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border: 1.5px solid #d1d1d6;
+    border-radius: 10px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .checkbox-item.selected { border-color: #007aff; background: #e9f3ff; }
+  .checkbox-item input[type="checkbox"] { width: 18px; height: 18px; accent-color: #007aff; flex-shrink: 0; }
+  .checkbox-item label { font-size: 15px; cursor: pointer; flex: 1; }
+
+  /* Score entry */
+  .score-row {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #f2f2f7;
+    gap: 10px;
+  }
+  .score-row:last-child { border-bottom: none; }
+  .score-player-name { flex: 1; font-size: 15px; font-weight: 500; }
+  .score-input { width: 90px; text-align: center; }
+  .score-error { font-size: 11px; color: #ff3b30; margin-top: 3px; }
+
+  /* Rankings table */
+  .rank-table { width: 100%; border-collapse: collapse; }
+  .rank-table th {
+    text-align: left;
+    font-size: 12px;
+    font-weight: 600;
+    color: #8e8e93;
+    padding: 6px 0;
+    border-bottom: 1px solid #e5e5ea;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  .rank-table td { padding: 12px 0; border-bottom: 1px solid #f2f2f7; font-size: 15px; }
+  .rank-table tr:last-child td { border-bottom: none; }
+  .rank-num { font-weight: 700; width: 30px; }
+  .rank-1 .rank-num { color: #ff9f0a; }
+  .rank-2 .rank-num { color: #636366; }
+  .rank-3 .rank-num { color: #bf5a2b; }
+  .rank-wins { font-weight: 600; width: 50px; text-align: center; }
+  .rank-diff { color: #636366; width: 60px; text-align: center; }
+
+  /* History */
+  .history-actions { display: flex; flex-direction: column; gap: 12px; }
+
+  /* Empty state */
+  .empty { text-align: center; color: #8e8e93; font-size: 14px; padding: 24px 0; }
+
+  /* Section label */
+  .section-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #8e8e93;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin: 16px 0 8px;
+  }
+
+  /* Round history rows */
+  .round-item {
+    padding: 10px 0;
+    border-bottom: 1px solid #f2f2f7;
+  }
+  .round-item:last-child { border-bottom: none; }
+  .round-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+  .round-title { font-weight: 600; font-size: 14px; }
+  .round-scores { font-size: 13px; color: #636366; line-height: 1.6; }
+
+  @media (min-width: 480px) {
+    main { max-width: 480px; margin: 0 auto; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1 id="page-title">選手名單</h1>
+</header>
+
+<main>
+  <!-- ROSTER PANEL -->
+  <div id="panel-roster" class="panel active">
+    <div class="card">
+      <h2>新增選手</h2>
+      <div class="input-row">
+        <input type="text" id="new-player-name" placeholder="選手姓名" maxlength="30">
+        <button class="btn btn-primary" onclick="addPlayer()">新增</button>
+      </div>
+    </div>
+
+    <div class="card" id="group-card" style="display:none">
+      <h2>建立組合</h2>
+      <p style="font-size:13px;color:#636366;margin-bottom:10px">選擇 2 位以上選手，他們的分數將自動同步</p>
+      <div id="group-checkbox-list" class="checkbox-list"></div>
+      <div style="margin-top:10px">
+        <input type="text" id="new-group-name" placeholder="組合名稱（選填）" maxlength="20">
+      </div>
+      <button class="btn btn-secondary btn-block" onclick="createGroup()">建立組合</button>
+    </div>
+
+    <div class="card">
+      <h2>選手名單</h2>
+      <div id="player-list"><p class="empty">尚未新增選手</p></div>
+    </div>
+
+    <div class="card" id="groups-card" style="display:none">
+      <h2>組合設定</h2>
+      <div id="groups-list"></div>
+    </div>
+  </div>
+
+  <!-- SCORE ENTRY PANEL -->
+  <div id="panel-score" class="panel">
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+        <span style="font-size:17px;font-weight:700">第 <span id="current-round-label">1</span> 場</span>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-secondary btn-sm" onclick="prevRound()" id="btn-prev-round" disabled>上一場</button>
+          <button class="btn btn-secondary btn-sm" onclick="nextRound()" id="btn-next-round">下一場</button>
+        </div>
+      </div>
+      <p style="font-size:12px;color:#8e8e93">共 <span id="total-rounds-label">1</span> 場</p>
+    </div>
+
+    <div class="card" id="score-entry-card">
+      <h2>輸入分數</h2>
+      <div id="score-rows"><p class="empty">請先在「名單」頁新增選手</p></div>
+      <button class="btn btn-primary btn-block" id="btn-save-round" onclick="saveRound()">儲存本場分數</button>
+    </div>
+  </div>
+
+  <!-- RANKINGS PANEL -->
+  <div id="panel-rankings" class="panel">
+    <div class="card">
+      <h2>目前排名</h2>
+      <div id="rankings-content"><p class="empty">尚無比賽資料</p></div>
+    </div>
+    <div class="card" id="round-history-card" style="display:none">
+      <h2>各場紀錄</h2>
+      <div id="round-history-list"></div>
+    </div>
+  </div>
+
+  <!-- HELP PANEL -->
+  <div id="panel-help" class="panel">
+    <div class="card">
+      <h2>關於本工具</h2>
+      <p style="font-size:14px;color:#636366;line-height:1.7">這是一款比賽計分工具，支援多位選手、組合綁定與自動排名，適合現場賽事使用。請依下方步驟操作。</p>
+    </div>
+
+    <div class="card">
+      <h2>第一步：建立名單</h2>
+      <div style="font-size:14px;color:#636366;line-height:1.8">
+        <p><strong>新增選手</strong></p>
+        <p>1. 切換到「名單」頁籤</p>
+        <p>2. 在「新增選手」欄位輸入選手姓名</p>
+        <p>3. 點按「新增」按鈕</p>
+        <p>4. 重複以上步驟新增所有選手</p>
+        <br>
+        <p><strong>刪除選手</strong></p>
+        <p>在選手名單中點按「刪除」即可移除。注意：已有計分紀錄的選手無法刪除。</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>第二步：設定組合（選用）</h2>
+      <div style="font-size:14px;color:#636366;line-height:1.8">
+        <p><strong>什麼是組合？</strong></p>
+        <p>組合是將 2 位以上的選手綁定在一起。計分時只需輸入一位，其他成員的分數會自動同步，排名時也視為同一單位。</p>
+        <br>
+        <p><strong>如何建立組合</strong></p>
+        <p>1. 在「名單」頁，勾選 2 位以上選手</p>
+        <p>2. 輸入組合名稱（可選填）</p>
+        <p>3. 點按「建立組合」</p>
+        <br>
+        <p>建立後，計分時輸入其中一位選手的分數，組合內其他成員會自動帶入相同分數（顯示黃色「已同步」標記）。</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>第三步：輸入分數</h2>
+      <div style="font-size:14px;color:#636366;line-height:1.8">
+        <p>1. 切換到「計分」頁籤</p>
+        <p>2. 使用「上一場／下一場」按鈕切換場次</p>
+        <p>3. 為每位選手輸入本場分數（需為整數，最小為 0）</p>
+        <p>4. 點按「儲存本場分數」完成記錄</p>
+        <br>
+        <p>若選手已加入組合，輸入其中一位的分數後，其他成員會自動填入相同分數。</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>排名規則</h2>
+      <div style="font-size:14px;color:#636366;line-height:1.8">
+        <p>切換到「排名」頁籤即可查看即時排名。</p>
+        <br>
+        <p><strong>勝場判定：</strong>每場得分最高者（唯一最高分）獲勝；若最高分有多人並列，則該場無人獲勝。</p>
+        <br>
+        <p><strong>排名順序：</strong></p>
+        <p>1. 勝場數多者排名較前</p>
+        <p>2. 勝場相同時，比較「勝場分數差總和」<br>（即每場獲勝時，最高分減去第二高分的加總）</p>
+        <p>3. 分數差也相同則並列</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>匯出與匯入資料</h2>
+      <div style="font-size:14px;color:#636366;line-height:1.8">
+        <p><strong>匯出</strong></p>
+        <p>在「紀錄」頁籤點按「匯出 .txt 檔案」，可將所有資料下載為文字檔，方便備份或轉移。</p>
+        <br>
+        <p><strong>匯入</strong></p>
+        <p>在「紀錄」頁籤點按「匯入 .txt 檔案」，選擇先前匯出的 .txt 檔案，即可還原資料。</p>
+        <br>
+        <p><strong>清除資料</strong></p>
+        <p>點按「清除所有資料」會刪除本機所有計分紀錄，此動作無法復原，請先匯出備份。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- HISTORY PANEL -->
+  <div id="panel-history" class="panel">
+    <div class="card">
+      <h2>資料管理</h2>
+      <div class="history-actions">
+        <button class="btn btn-secondary" onclick="exportTxt()">匯出 .txt 檔案</button>
+        <div>
+          <label class="btn btn-secondary" style="display:block;text-align:center;cursor:pointer">
+            匯入 .txt 檔案
+            <input type="file" accept=".txt" style="display:none" onchange="importTxt(this)">
+          </label>
+        </div>
+        <button class="btn btn-danger" onclick="confirmClearAll()">清除所有資料</button>
+      </div>
+    </div>
+    <div class="card">
+      <h2>使用說明</h2>
+      <div style="font-size:14px;color:#636366;line-height:1.7">
+        <p><strong>排名規則：</strong></p>
+        <p>1. 勝場數多者排名較前</p>
+        <p>2. 勝場相同時，比較「勝場分數差總和」（即每場勝利時領先分數的加總），總和較多者排名較前</p>
+        <br>
+        <p><strong>組合功能：</strong></p>
+        <p>在名單頁設定組合後，輸入其中一位選手的分數，組合內其他選手會自動帶入相同分數</p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<nav>
+  <button class="active" onclick="switchTab('roster', this)" id="nav-roster">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+      <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+    </svg>
+    名單
+  </button>
+  <button onclick="switchTab('score', this)" id="nav-score">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/>
+      <line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/>
+      <line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
+    </svg>
+    計分
+  </button>
+  <button onclick="switchTab('rankings', this)" id="nav-rankings">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+    </svg>
+    排名
+  </button>
+  <button onclick="switchTab('history', this)" id="nav-history">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+    </svg>
+    紀錄
+  </button>
+  <button onclick="switchTab('help', this)" id="nav-help">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+    </svg>
+    說明
+  </button>
+</nav>
+
+<div id="toast"></div>
+
+<script>
+// ─── TXT EXPORT FORMAT ────────────────────────────────────────────────────────
+// Line 1:  SCORE_TRACKER_V1
+// Line 2:  PLAYERS:<id>:<name>,<id>:<name>,...
+// Line 3:  GROUPS:<id>:<name>:<p1Id>+<p2Id>+...,...   (omitted if no groups)
+// Line 4+: ROUND:<roundNum>:<playerId>:<score>,<playerId>:<score>,...
+// ─────────────────────────────────────────────────────────────────────────────
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
+const STORAGE_KEY = 'score_tracker_v1';
+
+let state = {
+  players: [],      // [{ id, name }]
+  groups: [],       // [{ id, name, playerIds: string[] }]
+  rounds: {},       // { roundNum: { playerId: score } }
+  totalRounds: 1,
+  currentRound: 1,
+  nextPlayerId: 1,
+  nextGroupId: 1
+};
+
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      Object.assign(state, parsed);
+    }
+  } catch (e) {
+    // ignore corrupt data
+  }
+}
+
+// ─── TOAST ───────────────────────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg, duration = 2500) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), duration);
+}
+
+// ─── TAB NAVIGATION ──────────────────────────────────────────────────────────
+const TAB_TITLES = {
+  roster: '選手名單',
+  score: '計分',
+  rankings: '排名',
+  history: '紀錄管理',
+  help: '使用說明'
+};
+
+function switchTab(tab, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + tab).classList.add('active');
+  btn.classList.add('active');
+  document.getElementById('page-title').textContent = TAB_TITLES[tab];
+
+  if (tab === 'score') renderScoreEntry();
+  if (tab === 'rankings') renderRankings();
+}
+
+// ─── ROSTER ──────────────────────────────────────────────────────────────────
+function getPlayerGroup(playerId) {
+  return state.groups.find(g => g.playerIds.includes(playerId)) || null;
+}
+
+function playerHasScores(playerId) {
+  return Object.values(state.rounds).some(scores => playerId in scores);
+}
+
+function addPlayer() {
+  const input = document.getElementById('new-player-name');
+  const name = input.value.trim();
+  if (!name) { showToast('請輸入選手姓名'); return; }
+  if (state.players.some(p => p.name === name)) {
+    showToast('已有同名選手'); return;
+  }
+  state.players.push({ id: String(state.nextPlayerId++), name });
+  saveState();
+  input.value = '';
+  renderRoster();
+  showToast('已新增 ' + name);
+}
+
+function removePlayer(id) {
+  if (playerHasScores(id)) {
+    showToast('此選手已有計分紀錄，無法刪除');
+    return;
+  }
+  const grp = getPlayerGroup(id);
+  if (grp) {
+    grp.playerIds = grp.playerIds.filter(pid => pid !== id);
+    if (grp.playerIds.length < 2) {
+      state.groups = state.groups.filter(g => g.id !== grp.id);
+    }
+  }
+  state.players = state.players.filter(p => p.id !== id);
+  saveState();
+  renderRoster();
+}
+
+function createGroup() {
+  const checked = Array.from(document.querySelectorAll('#group-checkbox-list input:checked'))
+    .map(cb => cb.value);
+  if (checked.length < 2) { showToast('請選擇至少 2 位選手'); return; }
+
+  for (const pid of checked) {
+    if (getPlayerGroup(pid)) {
+      const name = state.players.find(p => p.id === pid)?.name;
+      showToast(name + ' 已在其他組合中'); return;
+    }
+  }
+
+  let groupName = document.getElementById('new-group-name').value.trim();
+  if (!groupName) {
+    groupName = '組合 ' + state.nextGroupId;
+  }
+  state.groups.push({ id: String(state.nextGroupId++), name: groupName, playerIds: checked });
+  saveState();
+  document.getElementById('new-group-name').value = '';
+  renderRoster();
+  showToast('已建立組合：' + groupName);
+}
+
+function disbandGroup(groupId) {
+  state.groups = state.groups.filter(g => g.id !== groupId);
+  saveState();
+  renderRoster();
+  showToast('已解散組合');
+}
+
+function renderRoster() {
+  const listEl = document.getElementById('player-list');
+  const groupCard = document.getElementById('group-card');
+  const groupsCard = document.getElementById('groups-card');
+  const checkboxList = document.getElementById('group-checkbox-list');
+
+  if (!state.players.length) {
+    listEl.innerHTML = '<p class="empty">尚未新增選手</p>';
+    groupCard.style.display = 'none';
+    groupsCard.style.display = 'none';
+    return;
+  }
+
+  // Player list
+  listEl.innerHTML = state.players.map(p => {
+    const grp = getPlayerGroup(p.id);
+    const badge = grp ? `<span class="badge">${grp.name}</span>` : '';
+    const canDelete = !playerHasScores(p.id);
+    const delBtn = canDelete
+      ? `<button class="btn btn-secondary btn-sm" onclick="removePlayer('${p.id}')">刪除</button>`
+      : '';
+    return `<div class="player-item">
+      <span class="player-name">${escHtml(p.name)}</span>
+      ${badge}
+      ${delBtn}
+    </div>`;
+  }).join('');
+
+  // Group section
+  if (state.players.length >= 2) {
+    groupCard.style.display = '';
+    checkboxList.innerHTML = state.players.map(p => {
+      const grp = getPlayerGroup(p.id);
+      const disabled = grp ? 'disabled' : '';
+      const title = grp ? ` (${grp.name})` : '';
+      return `<div class="checkbox-item" onclick="toggleCheckbox(event, '${p.id}')">
+        <input type="checkbox" value="${p.id}" ${disabled} id="chk-${p.id}">
+        <label for="chk-${p.id}">${escHtml(p.name)}${title}</label>
+      </div>`;
+    }).join('');
+  } else {
+    groupCard.style.display = 'none';
+  }
+
+  // Groups card
+  if (state.groups.length) {
+    groupsCard.style.display = '';
+    document.getElementById('groups-list').innerHTML = state.groups.map(g => {
+      const memberNames = g.playerIds.map(pid => {
+        const p = state.players.find(x => x.id === pid);
+        return p ? escHtml(p.name) : '(已移除)';
+      }).join('、');
+      return `<div class="player-item">
+        <div style="flex:1">
+          <div style="font-weight:600;font-size:15px">${escHtml(g.name)}</div>
+          <div style="font-size:13px;color:#636366;margin-top:2px">${memberNames}</div>
+        </div>
+        <button class="btn btn-secondary btn-sm" onclick="disbandGroup('${g.id}')">解散</button>
+      </div>`;
+    }).join('');
+  } else {
+    groupsCard.style.display = 'none';
+  }
+}
+
+function toggleCheckbox(e, playerId) {
+  if (e.target.tagName === 'INPUT') return;
+  const cb = document.getElementById('chk-' + playerId);
+  if (!cb || cb.disabled) return;
+  cb.checked = !cb.checked;
+  cb.closest('.checkbox-item').classList.toggle('selected', cb.checked);
+}
+
+// ─── SCORE ENTRY ─────────────────────────────────────────────────────────────
+function renderScoreEntry() {
+  const roundLabel = document.getElementById('current-round-label');
+  const totalLabel = document.getElementById('total-rounds-label');
+  const prevBtn = document.getElementById('btn-prev-round');
+  const nextBtn = document.getElementById('btn-next-round');
+
+  roundLabel.textContent = state.currentRound;
+  totalLabel.textContent = state.totalRounds;
+  prevBtn.disabled = state.currentRound <= 1;
+  nextBtn.textContent = state.currentRound < state.totalRounds ? '下一場' : '新增下一場';
+
+  const rowsEl = document.getElementById('score-rows');
+  if (!state.players.length) {
+    rowsEl.innerHTML = '<p class="empty">請先在「名單」頁新增選手</p>';
+    document.getElementById('btn-save-round').style.display = 'none';
+    return;
+  }
+  document.getElementById('btn-save-round').style.display = '';
+
+  const roundScores = state.rounds[state.currentRound] || {};
+
+  rowsEl.innerHTML = state.players.map(p => {
+    const grp = getPlayerGroup(p.id);
+    const mirrorBadge = grp ? `<span class="badge-mirrored">${escHtml(grp.name)}</span>` : '';
+    const val = roundScores[p.id] !== undefined ? roundScores[p.id] : '';
+    return `<div class="score-row" id="score-row-${p.id}">
+      <div style="flex:1">
+        <div style="display:flex;align-items:center;gap:6px">
+          <span class="score-player-name">${escHtml(p.name)}</span>
+          ${mirrorBadge}
+        </div>
+        <div class="score-error" id="err-${p.id}"></div>
+      </div>
+      <input type="number" class="score-input" id="score-${p.id}"
+        value="${val}" min="0" placeholder="0"
+        inputmode="numeric"
+        oninput="onScoreInput('${p.id}', this.value)">
+    </div>`;
+  }).join('');
+}
+
+function onScoreInput(playerId, rawVal) {
+  const errEl = document.getElementById('err-' + playerId);
+  const inputEl = document.getElementById('score-' + playerId);
+
+  if (rawVal === '' || rawVal === undefined) {
+    inputEl.classList.remove('error');
+    errEl.textContent = '';
+    mirrorGroupScore(playerId, '');
+    return;
+  }
+
+  const val = Number(rawVal);
+  if (!Number.isInteger(val) || val < 0) {
+    inputEl.classList.add('error');
+    errEl.textContent = '請輸入非負整數';
+    return;
+  }
+
+  inputEl.classList.remove('error');
+  errEl.textContent = '';
+  mirrorGroupScore(playerId, rawVal);
+}
+
+function mirrorGroupScore(playerId, rawVal) {
+  const grp = getPlayerGroup(playerId);
+  if (!grp) return;
+  grp.playerIds.forEach(pid => {
+    if (pid === playerId) return;
+    const el = document.getElementById('score-' + pid);
+    if (el) el.value = rawVal;
+  });
+}
+
+function saveRound() {
+  if (!state.players.length) return;
+
+  const scores = {};
+  let hasError = false;
+
+  state.players.forEach(p => {
+    const el = document.getElementById('score-' + p.id);
+    const raw = el ? el.value.trim() : '';
+    if (raw === '') return;
+    const val = Number(raw);
+    if (!Number.isInteger(val) || val < 0) {
+      hasError = true;
+      document.getElementById('err-' + p.id).textContent = '請輸入非負整數';
+      el.classList.add('error');
+    } else {
+      scores[p.id] = val;
+    }
+  });
+
+  if (hasError) { showToast('請修正錯誤後再儲存'); return; }
+  if (!Object.keys(scores).length) { showToast('請輸入至少一位選手的分數'); return; }
+
+  // Apply group mirroring to saved data
+  state.groups.forEach(grp => {
+    const memberScores = grp.playerIds.filter(pid => pid in scores);
+    if (memberScores.length > 0) {
+      const score = scores[memberScores[0]];
+      grp.playerIds.forEach(pid => { scores[pid] = score; });
+    }
+  });
+
+  state.rounds[state.currentRound] = scores;
+  saveState();
+  showToast('第 ' + state.currentRound + ' 場分數已儲存');
+  renderRankings();
+}
+
+function prevRound() {
+  if (state.currentRound > 1) {
+    state.currentRound--;
+    saveState();
+    renderScoreEntry();
+  }
+}
+
+function nextRound() {
+  if (state.currentRound < state.totalRounds) {
+    state.currentRound++;
+  } else {
+    state.totalRounds++;
+    state.currentRound = state.totalRounds;
+    saveState();
+  }
+  saveState();
+  renderScoreEntry();
+}
+
+// ─── RANKING ENGINE ───────────────────────────────────────────────────────────
+function computeRankings() {
+  // For each round: determine the winning "unit" (group or solo player)
+  // A unit wins if it has the uniquely highest score in the round.
+  // Differential = winning_unit_score - second_highest_unit_score.
+
+  const winCount = {};  // playerId -> wins
+  const winDiff = {};   // playerId -> total winning differential
+
+  state.players.forEach(p => {
+    winCount[p.id] = 0;
+    winDiff[p.id] = 0;
+  });
+
+  Object.values(state.rounds).forEach(roundScores => {
+    // Build unit scores (groups count as one unit)
+    const unitScores = [];
+    const processedPlayers = new Set();
+
+    state.players.forEach(p => {
+      if (processedPlayers.has(p.id)) return;
+      if (!(p.id in roundScores)) return;
+
+      const grp = getPlayerGroup(p.id);
+      if (grp) {
+        const memberIds = grp.playerIds.filter(pid => pid in roundScores);
+        if (memberIds.length > 0) {
+          const score = roundScores[memberIds[0]];
+          unitScores.push({ score, playerIds: grp.playerIds.filter(pid => state.players.find(x => x.id === pid)) });
+          grp.playerIds.forEach(pid => processedPlayers.add(pid));
+        }
+      } else {
+        unitScores.push({ score: roundScores[p.id], playerIds: [p.id] });
+        processedPlayers.add(p.id);
+      }
+    });
+
+    if (unitScores.length < 1) return;
+
+    const sorted = [...unitScores].sort((a, b) => b.score - a.score);
+    const maxScore = sorted[0].score;
+    const secondScore = sorted.length > 1 ? sorted[1].score : 0;
+
+    // Unique max = only one unit at the top
+    const winners = unitScores.filter(u => u.score === maxScore);
+    if (winners.length === 1) {
+      const diff = maxScore - secondScore;
+      winners[0].playerIds.forEach(pid => {
+        if (pid in winCount) {
+          winCount[pid]++;
+          winDiff[pid] += diff;
+        }
+      });
+    }
+  });
+
+  return state.players
+    .map(p => ({ ...p, wins: winCount[p.id] || 0, diff: winDiff[p.id] || 0 }))
+    .sort((a, b) => b.wins - a.wins || b.diff - a.diff);
+}
+
+function renderRankings() {
+  const contentEl = document.getElementById('rankings-content');
+  const roundHistoryCard = document.getElementById('round-history-card');
+  const roundHistoryList = document.getElementById('round-history-list');
+
+  if (!state.players.length) {
+    contentEl.innerHTML = '<p class="empty">尚無比賽資料</p>';
+    roundHistoryCard.style.display = 'none';
+    return;
+  }
+
+  const ranked = computeRankings();
+
+  const rankSymbols = ['🥇', '🥈', '🥉'];
+  let lastWins = -1, lastDiff = -1, currentRank = 0;
+
+  const rows = ranked.map((p, i) => {
+    if (p.wins !== lastWins || p.diff !== lastDiff) {
+      currentRank = i + 1;
+      lastWins = p.wins;
+      lastDiff = p.diff;
+    }
+    const grp = getPlayerGroup(p.id);
+    const badge = grp ? ` <span class="badge">${escHtml(grp.name)}</span>` : '';
+    const rankClass = currentRank <= 3 ? `rank-${currentRank}` : '';
+    return `<tr class="${rankClass}">
+      <td class="rank-num">${currentRank}</td>
+      <td>${escHtml(p.name)}${badge}</td>
+      <td class="rank-wins">${p.wins}</td>
+      <td class="rank-diff">+${p.diff}</td>
+    </tr>`;
+  }).join('');
+
+  contentEl.innerHTML = `<table class="rank-table">
+    <thead><tr>
+      <th>名次</th><th>選手</th><th style="text-align:center">勝場</th><th style="text-align:center">差分</th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+
+  // Round history
+  const roundNums = Object.keys(state.rounds).map(Number).sort((a, b) => a - b);
+  if (roundNums.length) {
+    roundHistoryCard.style.display = '';
+    roundHistoryList.innerHTML = roundNums.map(rn => {
+      const scores = state.rounds[rn];
+      const scoreLines = state.players
+        .filter(p => p.id in scores)
+        .map(p => `${escHtml(p.name)}: ${scores[p.id]}`)
+        .join('　');
+      return `<div class="round-item">
+        <div class="round-item-header">
+          <span class="round-title">第 ${rn} 場</span>
+        </div>
+        <div class="round-scores">${scoreLines}</div>
+      </div>`;
+    }).join('');
+  } else {
+    roundHistoryCard.style.display = 'none';
+  }
+}
+
+// ─── EXPORT / IMPORT / CLEAR ─────────────────────────────────────────────────
+function exportTxt() {
+  const lines = ['SCORE_TRACKER_V1'];
+
+  const playerStr = state.players.map(p => `${p.id}:${p.name}`).join(',');
+  lines.push('PLAYERS:' + playerStr);
+
+  if (state.groups.length) {
+    const groupStr = state.groups.map(g =>
+      `${g.id}:${g.name}:${g.playerIds.join('+')}`
+    ).join(',');
+    lines.push('GROUPS:' + groupStr);
+  }
+
+  const ranked = computeRankings();
+  lines.push('');
+  lines.push('=== 排名 ===');
+  let rank = 1;
+  ranked.forEach((p, i) => {
+    lines.push(`${rank}. ${p.name}  勝場: ${p.wins}  差分: +${p.diff}`);
+    rank++;
+  });
+
+  lines.push('');
+  lines.push('=== 比賽紀錄 ===');
+  Object.keys(state.rounds).map(Number).sort((a, b) => a - b).forEach(rn => {
+    const scores = state.rounds[rn];
+    const scoreStr = state.players
+      .filter(p => p.id in scores)
+      .map(p => `${p.name}:${scores[p.id]}`)
+      .join(', ');
+    lines.push(`ROUND:${rn}:${scoreStr}`);
+  });
+
+  lines.push('');
+  lines.push('META:' + JSON.stringify({
+    totalRounds: state.totalRounds,
+    nextPlayerId: state.nextPlayerId,
+    nextGroupId: state.nextGroupId
+  }));
+
+  const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'scores.txt';
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('已匯出 scores.txt');
+}
+
+function importTxt(inputEl) {
+  const file = inputEl.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const text = e.target.result;
+      const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+
+      if (lines[0] !== 'SCORE_TRACKER_V1') throw new Error('格式不符');
+
+      const newState = {
+        players: [], groups: [], rounds: {},
+        totalRounds: 1, currentRound: 1,
+        nextPlayerId: 1, nextGroupId: 1
+      };
+
+      for (const line of lines) {
+        if (line.startsWith('PLAYERS:')) {
+          const parts = line.slice('PLAYERS:'.length).split(',');
+          newState.players = parts.map(s => {
+            const idx = s.indexOf(':');
+            return { id: s.slice(0, idx), name: s.slice(idx + 1) };
+          });
+        } else if (line.startsWith('GROUPS:')) {
+          const parts = line.slice('GROUPS:'.length).split(',');
+          newState.groups = parts.map(s => {
+            const segs = s.split(':');
+            return { id: segs[0], name: segs[1], playerIds: segs[2].split('+') };
+          });
+        } else if (line.startsWith('ROUND:')) {
+          const rest = line.slice('ROUND:'.length);
+          const colonIdx = rest.indexOf(':');
+          const roundNum = parseInt(rest.slice(0, colonIdx));
+          const scoreStr = rest.slice(colonIdx + 1);
+          const scores = {};
+          scoreStr.split(', ').forEach(s => {
+            const lastColon = s.lastIndexOf(':');
+            const pName = s.slice(0, lastColon);
+            const pScore = parseInt(s.slice(lastColon + 1));
+            const player = newState.players.find(p => p.name === pName);
+            if (player) scores[player.id] = pScore;
+          });
+          if (Object.keys(scores).length) newState.rounds[roundNum] = scores;
+        } else if (line.startsWith('META:')) {
+          const meta = JSON.parse(line.slice('META:'.length));
+          Object.assign(newState, meta);
+        }
+      }
+
+      if (!newState.players.length) throw new Error('找不到選手資料');
+
+      Object.assign(state, newState);
+      saveState();
+      renderRoster();
+      renderScoreEntry();
+      renderRankings();
+      showToast('匯入成功');
+    } catch (err) {
+      showToast('匯入失敗：' + (err.message || '格式不符'));
+    }
+    inputEl.value = '';
+  };
+  reader.readAsText(file);
+}
+
+function confirmClearAll() {
+  if (confirm('確定要清除所有資料嗎？此動作無法復原。')) {
+    clearAll();
+  }
+}
+
+function clearAll() {
+  localStorage.removeItem(STORAGE_KEY);
+  state = {
+    players: [], groups: [], rounds: {},
+    totalRounds: 1, currentRound: 1,
+    nextPlayerId: 1, nextGroupId: 1
+  };
+  renderRoster();
+  renderScoreEntry();
+  renderRankings();
+  showToast('已清除所有資料');
+}
+
+// ─── UTILS ───────────────────────────────────────────────────────────────────
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+// Allow Enter key to add player
+document.getElementById('new-player-name').addEventListener('keydown', e => {
+  if (e.key === 'Enter') addPlayer();
+});
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+loadState();
+renderRoster();
+renderScoreEntry();
+</script>
+</body>
+</html>
