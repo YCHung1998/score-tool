@@ -259,24 +259,25 @@
   .round-winner { font-size: 12px; color: #0071e3; margin-top: 4px; font-weight: 500; }
   .round-tie { font-size: 12px; color: #86868b; margin-top: 4px; }
 
-  /* Wireframe overview */
-  .wireframe-pre {
-    font-family: 'Menlo', 'Courier New', monospace;
-    font-size: 11px;
-    line-height: 1.4;
-    background: #f5f5f0;
-    padding: 12px;
-    border-radius: 6px;
-    overflow-x: auto;
-    margin: 0;
-  }
-  .wireframe-section h4 {
-    font-size: 13px;
-    font-weight: 600;
-    margin: 0 0 8px;
-    color: #1d1d1f;
-  }
-  .wireframe-section + .wireframe-section { margin-top: 16px; }
+  /* Tab overview mockups */
+  .tab-overview { display: flex; gap: 16px; overflow-x: auto; padding: 4px 4px 12px; scrollbar-width: none; }
+  .tab-overview::-webkit-scrollbar { display: none; }
+  .tab-preview { flex-shrink: 0; width: 140px; text-align: center; }
+  .tp-frame { width: 140px; height: 240px; background: #fff; border-radius: 14px; border: 2px solid #d4d4c8; box-shadow: 0 4px 16px rgba(0,0,0,0.10); overflow: hidden; display: flex; flex-direction: column; }
+  .tp-header { background: #1d1d1f; color: #fff; font-size: 9px; font-weight: 600; padding: 7px 8px 5px; letter-spacing: 0.3px; flex-shrink: 0; }
+  .tp-body { flex: 1; padding: 7px; display: flex; flex-direction: column; gap: 5px; overflow: hidden; }
+  .tp-card { background: #f5f5f0; border-radius: 5px; padding: 5px 6px; display: flex; flex-direction: column; gap: 3px; }
+  .tp-row { height: 6px; background: #d4d4c8; border-radius: 3px; }
+  .tp-row.input { background: #fff; border: 1px solid #d4d4c8; height: 8px; }
+  .tp-row.short { width: 55%; }
+  .tp-row.accent { background: #0071e3; }
+  .tp-row.wide { width: 80%; }
+  .tp-badge { height: 10px; background: #0071e3; border-radius: 3px; margin-top: 2px; }
+  .tp-nav { padding: 4px 6px; display: flex; justify-content: space-around; border-top: 1px solid #e5e5ea; background: #fafaf8; flex-shrink: 0; }
+  .tp-dot { width: 18px; height: 18px; background: #e5e5ea; border-radius: 3px; }
+  .tp-dot.active { background: #0071e3; }
+  .tp-label { font-size: 12px; font-weight: 600; margin: 8px 0 2px; color: #1d1d1f; }
+  .tp-desc { font-size: 10px; color: #86868b; margin: 0; line-height: 1.3; }
 
   @media (min-width: 480px) {
     main { max-width: 480px; margin: 0 auto; }
@@ -383,138 +384,166 @@
       <h2>App 結構總覽</h2>
       <p style="font-size:13px;color:#6e6e73;margin-bottom:16px">六個分頁各司其職，依序操作即可完成整場賽事紀錄。</p>
 
-      <div class="wireframe-section">
-        <h4>📋 名單 — 新增選手 &amp; 建立小組</h4>
-        <pre class="wireframe-pre">┌─────────────────────────┐
-│ 計分工具      選手名單  │
-├─────────────────────────┤
-│ ┌─────────────────────┐ │
-│ │ 新增選手            │ │
-│ │ [姓名_______] [新增]│ │
-│ └─────────────────────┘ │
-│ ┌─────────────────────┐ │
-│ │ 建立小組            │ │
-│ │ [名稱___] [建立]   │ │
-│ │ ☐ 昱佑  ☐ 歐易    │ │
-│ └─────────────────────┘ │
-│ ┌─────────────────────┐ │
-│ │ 小組列表            │ │
-│ │  A  昱佑、歐易、消麵│ │
-│ │  X  昀、菜菜…      │ │
-│ └─────────────────────┘ │
-├─────────────────────────┤
-│[名][程][分][排][錄][明] │
-└─────────────────────────┘</pre>
-      </div>
+      <div class="tab-overview">
 
-      <div class="wireframe-section">
-        <h4>📅 賽程 — 新增場次 &amp; 賽程一覽</h4>
-        <pre class="wireframe-pre">┌─────────────────────────┐
-│ 計分工具          賽程  │
-├─────────────────────────┤
-│ ┌─────────────────────┐ │
-│ │ 新增場次            │ │
-│ │ [輪次標籤_________] │ │
-│ │ 隊伍甲              │ │
-│ │ ☑ A  ☐ B  ☑ C  ☐ D│ │
-│ │ 隊伍乙              │ │
-│ │ ☐ A  ☑ B  ☐ C  ☑ D│ │
-│ │      [新增場次]     │ │
-│ └─────────────────────┘ │
-│ ┌─────────────────────┐ │
-│ │ 賽程一覽            │ │
-│ │ 第一輪              │ │
-│ │  A+C vs X   待計分 │ │
-│ │  A+C vs B+D 待計分 │ │
-│ └─────────────────────┘ │
-├─────────────────────────┤
-│[名][程][分][排][錄][明] │
-└─────────────────────────┘</pre>
-      </div>
+        <!-- 名單 -->
+        <div class="tab-preview">
+          <div class="tp-frame">
+            <div class="tp-header">選手名單</div>
+            <div class="tp-body">
+              <div class="tp-card">
+                <div class="tp-row input"></div>
+                <div class="tp-badge"></div>
+              </div>
+              <div class="tp-card">
+                <div class="tp-row wide"></div>
+                <div class="tp-row short"></div>
+                <div class="tp-row wide"></div>
+              </div>
+              <div class="tp-card">
+                <div class="tp-row input short"></div>
+                <div class="tp-badge"></div>
+                <div class="tp-row short"></div>
+                <div class="tp-row short"></div>
+              </div>
+            </div>
+            <div class="tp-nav">
+              <span class="tp-dot active"></span><span class="tp-dot"></span><span class="tp-dot"></span><span class="tp-dot"></span><span class="tp-dot"></span><span class="tp-dot"></span>
+            </div>
+          </div>
+          <p class="tp-label">📋 名單</p>
+          <p class="tp-desc">新增選手 &amp; 建立小組</p>
+        </div>
 
-      <div class="wireframe-section">
-        <h4>✏️ 計分 — 逐場輸入分數</h4>
-        <pre class="wireframe-pre">┌─────────────────────────┐
-│ 計分工具          計分  │
-├─────────────────────────┤
-│ ┌─────────────────────┐ │
-│ │ 場次計分            │ │
-│ │ 第一輪              │ │
-│ │  A+C  vs  X        │ │
-│ │  [21_] : [15_] [儲]│ │
-│ │  🏆 A+C 勝 差分+6  │ │
-│ │ ─────────────────  │ │
-│ │  A+C  vs  B+D      │ │
-│ │  [___] : [___] [儲]│ │
-│ └─────────────────────┘ │
-├─────────────────────────┤
-│[名][程][分][排][錄][明] │
-└─────────────────────────┘</pre>
-      </div>
+        <!-- 賽程 -->
+        <div class="tab-preview">
+          <div class="tp-frame">
+            <div class="tp-header">賽程</div>
+            <div class="tp-body">
+              <div class="tp-card">
+                <div class="tp-row input"></div>
+                <div class="tp-row short"></div>
+                <div class="tp-row"></div>
+                <div class="tp-row wide"></div>
+                <div class="tp-row short"></div>
+                <div class="tp-row"></div>
+                <div class="tp-badge"></div>
+              </div>
+              <div class="tp-card">
+                <div class="tp-row short"></div>
+                <div class="tp-row"></div>
+                <div class="tp-row"></div>
+              </div>
+            </div>
+            <div class="tp-nav">
+              <span class="tp-dot"></span><span class="tp-dot active"></span><span class="tp-dot"></span><span class="tp-dot"></span><span class="tp-dot"></span><span class="tp-dot"></span>
+            </div>
+          </div>
+          <p class="tp-label">📅 賽程</p>
+          <p class="tp-desc">新增場次 &amp; 賽程一覽</p>
+        </div>
 
-      <div class="wireframe-section">
-        <h4>📊 排名 — 小組排名 &amp; 場次結果</h4>
-        <pre class="wireframe-pre">┌─────────────────────────┐
-│ 計分工具          排名  │
-├─────────────────────────┤
-│ ┌─────────────────────┐ │
-│ │ 小組排名            │ │
-│ │ 名次 小組 勝 負  差 │ │
-│ │  1   A+C   2  0  +8 │ │
-│ │  2   B+D   1  1  +3 │ │
-│ │  3   X     0  2   0 │ │
-│ └─────────────────────┘ │
-│ ┌─────────────────────┐ │
-│ │ 場次結果            │ │
-│ │ 第一輪              │ │
-│ │  A+C vs X: 21:15   │ │
-│ │  🏆 A+C 勝 差分+6  │ │
-│ └─────────────────────┘ │
-├─────────────────────────┤
-│[名][程][分][排][錄][明] │
-└─────────────────────────┘</pre>
-      </div>
+        <!-- 計分 -->
+        <div class="tab-preview">
+          <div class="tp-frame">
+            <div class="tp-header">計分</div>
+            <div class="tp-body">
+              <div class="tp-card">
+                <div class="tp-row short"></div>
+                <div class="tp-row"></div>
+                <div class="tp-row input"></div>
+                <div class="tp-row input"></div>
+                <div class="tp-badge"></div>
+                <div class="tp-row accent short"></div>
+              </div>
+              <div class="tp-card">
+                <div class="tp-row"></div>
+                <div class="tp-row input"></div>
+                <div class="tp-row input"></div>
+                <div class="tp-badge"></div>
+              </div>
+            </div>
+            <div class="tp-nav">
+              <span class="tp-dot"></span><span class="tp-dot"></span><span class="tp-dot active"></span><span class="tp-dot"></span><span class="tp-dot"></span><span class="tp-dot"></span>
+            </div>
+          </div>
+          <p class="tp-label">✏️ 計分</p>
+          <p class="tp-desc">逐場輸入分數</p>
+        </div>
 
-      <div class="wireframe-section">
-        <h4>🗂 紀錄 — 匯出 / 匯入 / 示範資料</h4>
-        <pre class="wireframe-pre">┌─────────────────────────┐
-│ 計分工具      紀錄管理  │
-├─────────────────────────┤
-│ ┌─────────────────────┐ │
-│ │ 示範資料            │ │
-│ │ 6/19 五組六場賽制…  │ │
-│ │   [載入示範資料]    │ │
-│ └─────────────────────┘ │
-│ ┌─────────────────────┐ │
-│ │ 資料管理            │ │
-│ │  [匯出 .txt 檔案]  │ │
-│ │  [匯入 .txt 檔案]  │ │
-│ │  [清除所有資料]     │ │
-│ └─────────────────────┘ │
-├─────────────────────────┤
-│[名][程][分][排][錄][明] │
-└─────────────────────────┘</pre>
-      </div>
+        <!-- 排名 -->
+        <div class="tab-preview">
+          <div class="tp-frame">
+            <div class="tp-header">排名</div>
+            <div class="tp-body">
+              <div class="tp-card">
+                <div class="tp-row accent short"></div>
+                <div class="tp-row wide"></div>
+                <div class="tp-row wide"></div>
+                <div class="tp-row wide"></div>
+              </div>
+              <div class="tp-card">
+                <div class="tp-row short"></div>
+                <div class="tp-row"></div>
+                <div class="tp-row accent short"></div>
+                <div class="tp-row"></div>
+              </div>
+            </div>
+            <div class="tp-nav">
+              <span class="tp-dot"></span><span class="tp-dot"></span><span class="tp-dot"></span><span class="tp-dot active"></span><span class="tp-dot"></span><span class="tp-dot"></span>
+            </div>
+          </div>
+          <p class="tp-label">📊 排名</p>
+          <p class="tp-desc">小組排名 &amp; 場次結果</p>
+        </div>
 
-      <div class="wireframe-section">
-        <h4>❓ 說明 — 操作步驟與結構總覽</h4>
-        <pre class="wireframe-pre">┌─────────────────────────┐
-│ 計分工具      使用說明  │
-├─────────────────────────┤
-│ ┌─────────────────────┐ │
-│ │ App 結構總覽        │ │
-│ │  ← 你現在看到的    │ │
-│ └─────────────────────┘ │
-│ ┌─────────────────────┐ │
-│ │ 第一步：建立名單…   │ │
-│ └─────────────────────┘ │
-│ ┌─────────────────────┐ │
-│ │ 第二步：規劃賽程…   │ │
-│ └─────────────────────┘ │
-│      … 更多步驟 …       │
-├─────────────────────────┤
-│[名][程][分][排][錄][明] │
-└─────────────────────────┘</pre>
+        <!-- 紀錄 -->
+        <div class="tab-preview">
+          <div class="tp-frame">
+            <div class="tp-header">紀錄管理</div>
+            <div class="tp-body">
+              <div class="tp-card">
+                <div class="tp-row wide"></div>
+                <div class="tp-badge"></div>
+              </div>
+              <div class="tp-card">
+                <div class="tp-badge"></div>
+                <div class="tp-badge"></div>
+                <div class="tp-badge"></div>
+              </div>
+            </div>
+            <div class="tp-nav">
+              <span class="tp-dot"></span><span class="tp-dot"></span><span class="tp-dot"></span><span class="tp-dot"></span><span class="tp-dot active"></span><span class="tp-dot"></span>
+            </div>
+          </div>
+          <p class="tp-label">🗂 紀錄</p>
+          <p class="tp-desc">匯出 / 匯入 / 示範資料</p>
+        </div>
+
+        <!-- 說明 -->
+        <div class="tab-preview">
+          <div class="tp-frame">
+            <div class="tp-header">使用說明</div>
+            <div class="tp-body">
+              <div class="tp-card">
+                <div class="tp-row short"></div>
+                <div class="tp-row wide"></div>
+              </div>
+              <div class="tp-card">
+                <div class="tp-row wide"></div>
+                <div class="tp-row"></div>
+                <div class="tp-row"></div>
+                <div class="tp-row"></div>
+              </div>
+            </div>
+            <div class="tp-nav">
+              <span class="tp-dot"></span><span class="tp-dot"></span><span class="tp-dot"></span><span class="tp-dot"></span><span class="tp-dot"></span><span class="tp-dot active"></span>
+            </div>
+          </div>
+          <p class="tp-label">❓ 說明</p>
+          <p class="tp-desc">操作步驟與結構總覽</p>
+        </div>
+
       </div>
     </div>
 
