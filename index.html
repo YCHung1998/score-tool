@@ -73,6 +73,9 @@
   }
   nav button.active { color: #0071e3; }
   nav button svg { width: 22px; height: 22px; }
+  .nav-label { display: block; font-size: 10px; }
+  .nav-sublabel { display: block; font-size: 8px; color: #86868b; line-height: 1.1; margin-top: 1px; }
+  nav button.active .nav-sublabel { color: #0071e3; }
 
   /* Main content */
   main {
@@ -471,10 +474,10 @@
           <p class="tp-desc">逐場輸入分數</p>
         </div>
 
-        <!-- 排名 -->
+        <!-- 戰績 -->
         <div class="tab-preview">
           <div class="tp-frame">
-            <div class="tp-header">排名</div>
+            <div class="tp-header">戰績</div>
             <div class="tp-body">
               <div class="tp-card">
                 <div class="tp-row accent short"></div>
@@ -493,7 +496,7 @@
               <span class="tp-dot"></span><span class="tp-dot"></span><span class="tp-dot"></span><span class="tp-dot active"></span><span class="tp-dot"></span><span class="tp-dot"></span>
             </div>
           </div>
-          <p class="tp-label">📊 排名</p>
+          <p class="tp-label">📊 戰績</p>
           <p class="tp-desc">小組排名 &amp; 場次結果</p>
         </div>
 
@@ -611,7 +614,7 @@
       <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
       <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
     </svg>
-    名單
+    <span class="nav-label">名單</span><span class="nav-sublabel">Roster</span>
   </button>
   <button onclick="switchTab('schedule', this)" id="nav-schedule">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -619,32 +622,32 @@
       <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
       <line x1="3" y1="10" x2="21" y2="10"/>
     </svg>
-    賽程
+    <span class="nav-label">賽程</span><span class="nav-sublabel">Schedule</span>
   </button>
   <button onclick="switchTab('score', this)" id="nav-score">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
       <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
     </svg>
-    計分
+    <span class="nav-label">計分</span><span class="nav-sublabel">Score</span>
   </button>
   <button onclick="switchTab('rankings', this)" id="nav-rankings">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
     </svg>
-    排名
+    <span class="nav-label">戰績</span><span class="nav-sublabel">Battle Record</span>
   </button>
   <button onclick="switchTab('history', this)" id="nav-history">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
     </svg>
-    紀錄
+    <span class="nav-label">紀錄</span><span class="nav-sublabel">Records</span>
   </button>
   <button onclick="switchTab('help', this)" id="nav-help">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>
     </svg>
-    說明
+    <span class="nav-label">說明</span><span class="nav-sublabel">Guide</span>
   </button>
 </nav>
 
@@ -694,7 +697,7 @@ const TAB_TITLES = {
   roster:   '選手名單',
   schedule: '賽程',
   score:    '計分',
-  rankings: '排名',
+  rankings: '戰績',
   history:  '紀錄管理',
   help:     '使用說明'
 };
