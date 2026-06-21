@@ -17,6 +17,10 @@ The system SHALL display a visual overview of all 6 tabs at the top of the 說�
 - **WHEN** the overview is rendered
 - **THEN** it SHALL use HTML div elements with CSS styling — NOT `<pre>` blocks or monospace fonts
 
+#### Scenario: Fourth mockup labelled 戰績 not 排名
+- **WHEN** the wireframe overview card is rendered
+- **THEN** the fourth phone-frame mockup SHALL show 戰績 in the tp-header and 📊 戰績 in the tp-label (not 排名)
+
 #### Scenario: Each panel labelled
 - **WHEN** a panel mockup is shown
 - **THEN** it SHALL include the tab name and a one-line description of its purpose below the frame
